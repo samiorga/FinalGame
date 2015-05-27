@@ -15,7 +15,8 @@ import java.util.Random;
 
 /**
  *
- * @author branc2347
+ * @author
+ * branc2347
  */
 // make sure you rename this class if you are doing a copy/paste
 public class Game extends JComponent implements KeyListener {
@@ -55,10 +56,12 @@ public class Game extends JComponent implements KeyListener {
     int foodWidth = 2; //used for both width and height because it's a circle
     int timer = 5 * 60; // 5 second delay
     //camera correction + zoom
-    double zoomFactor = 1;
+    double zoomFactor = 1.5;
     CameraCorrection camera = new CameraCorrection();
-    public static int[] camx = new int[3];
-    public static int[] camy = new int[3];
+    double camWidth = WIDTH / zoomFactor;
+    double camHeight = HEIGHT / zoomFactor;
+    double camx = (player1.getCenterX() - camWidth / 2);
+    double camy = (player1.getCenterY() - camHeight / 2);
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -70,16 +73,15 @@ public class Game extends JComponent implements KeyListener {
         g2.clearRect(0, 0, entireWidth, entireHeight);
         camera.playerCameraCorrection(player1, 0);
         //scale or zoom in
-        g2.translate(camx[0], -camy[0]);
+        
         g2.scale(zoomFactor, zoomFactor);
+        g2.translate(-camx, -camy);
+
 
         // GAME DRAWING GOES HERE
-        camx[2] = 0;
-        camy[2] = 0;
         for (int i = 0; i < amountFood; i++) {
             g2.fillOval(food[i].x, food[i].y, food[i].width, food[i].height);
         }
-        
 //        camera.playerCameraCorrection(player2, 1);
 
         player1.draw(g2);
@@ -113,7 +115,6 @@ public class Game extends JComponent implements KeyListener {
                 player1.height += 2;
                 player1.x -= 1;
                 player1.y -= 1;
-
             }
             if (p1Minus) {
                 player1.width -= 2;
@@ -137,12 +138,16 @@ public class Game extends JComponent implements KeyListener {
             handleCollisionPlayer(player1, player2);
             handleCollisionFood(player1, food);
             handleCollisionFood(player2, food);
+            
             if (timer > 0) {
                 timer--;
             } else // timer hit 0
             {
                 foodRespawn(player1, food);
             }
+            
+            camx = (player1.getCenterX() - camWidth / 2);
+            camy = (player1.getCenterY() - camHeight / 2);
             // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
             repaint();
@@ -236,7 +241,12 @@ public class Game extends JComponent implements KeyListener {
     }
 
     /**
-     * @param args the command line arguments
+     * @param
+     * args
+     * the
+     * command
+     * line
+     * arguments
      */
     public static void main(String[] args) {
         // creates a windows to show my game

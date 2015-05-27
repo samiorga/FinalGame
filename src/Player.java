@@ -52,6 +52,6 @@ public class Player extends Rectangle {
 
     public void draw(Graphics2D g) {
         g.setColor(c);
-        g.fillOval(x - Game.camx[0], y - Game.camy[0], width, height);
+        g.fillOval(x, y, width, height);
     }
 }

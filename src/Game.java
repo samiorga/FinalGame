@@ -11,7 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
 /**
@@ -27,32 +26,26 @@ public class Game extends JComponent implements KeyListener {
     public static final int HEIGHT = 600;
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
-    
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
-    
     //movement variables
     boolean p1Up = false;
     boolean p1Down = false;
     boolean p1Right = false;
     boolean p1Left = false;
-    
     //size boost variables
     boolean p1Add = false;
     boolean p1Minus = false;
     boolean p2Add = false;
     boolean p2Minus = false;
-    
     //player speed 
     static final int defaultSpeed = 3;
-    
     // character variables
     static final double playerWidth = 20;
     Player player1 = new Player(500, 300, playerWidth, playerWidth);
-    Player player2 = new Player(300, 300, playerWidth,playerWidth);
+    Player player2 = new Player(300, 300, playerWidth, playerWidth);
     // Random for objects
     Random random = new Random(); // used for generating food, player position
-    
     //food gen variables
     int entireWidth = 5000; // actual width of the game (not the window)
     int entireHeight = 3750;// actual heigh of the game (not the window)
@@ -60,11 +53,10 @@ public class Game extends JComponent implements KeyListener {
     Rectangle[] food = new Rectangle[amountFood]; //array storing all food created
     int foodWidth = 2; //used for both width and height because it's a circle
     int timer = 15 * 60; // delay before respawn
-    
     //camera correction + zoom
-    double zoomFactor = 3; // factor to
-    double camWidth = WIDTH / zoomFactor;
-    double camHeight = HEIGHT / zoomFactor;
+    static double zoomFactor = 2; // factor to
+    static double camWidth = WIDTH / zoomFactor;
+    static double camHeight = HEIGHT / zoomFactor;
     double camx = (player1.getCenterX() - camWidth / 2);
     double camy = (player1.getCenterY() - camHeight / 2);
 
@@ -78,16 +70,16 @@ public class Game extends JComponent implements KeyListener {
         g2.clearRect(0, 0, entireWidth, entireHeight);
         //scale or zoom in
         g2.scale(zoomFactor, zoomFactor);
-        g2.translate(-camx, -camy);
-
+        
+//        g2.translate(-camx, -camy);
+        player1.draw(g2, camx, camy);
+        player2.draw(g2,camx,camy);
         // GAME DRAWING GOES HERE
         for (int i = 0; i < amountFood; i++) {
-            g2.fillOval(food[i].x, food[i].y, food[i].width, food[i].height);
+            g2.fillOval(food[i].x-(int)camx, food[i].y-(int)camy, food[i].width, food[i].height);
         }
-//        camera.playerCameraCorrection(player2, 1);
+        
 
-        player1.draw(g2);
-        player2.draw(g2);
 
         // GAME DRAWING ENDS HERE
     }
@@ -141,14 +133,14 @@ public class Game extends JComponent implements KeyListener {
             handleCollisionPlayer(player1, player2);
             handleCollisionFood(player1, food);
             handleCollisionFood(player2, food);
-            
+
             if (timer > 0) {
                 timer--;
             } else // timer hit 0
             {
                 foodRespawn(player1, food);
             }
-            
+
             camx = (player1.getCenterX() - camWidth / 2);
             camy = (player1.getCenterY() - camHeight / 2);
             // GAME LOGIC ENDS HERE 
@@ -171,7 +163,7 @@ public class Game extends JComponent implements KeyListener {
 
     public void foodRespawn(Player player, Rectangle[] food) {
 
-        timer = 5 * 60; // reset timer
+        timer = 15 * 60; // reset timer
 
         for (int i = 0; i < food.length; i++) {
             if (food[i].width < 0) {
@@ -230,9 +222,9 @@ public class Game extends JComponent implements KeyListener {
             double centerDiff = (p1Radius + p2Radius);
             if (Math.sqrt(xDiff * xDiff + yDiff * yDiff) <= centerDiff - p2Radius && f.width > 0) {
 //                System.out.println(player.width);
-                player.width += f.width/2;
+                player.width += f.width / 2;
                 player.x -= f.width / 4;
-                player.height += f.height/2;
+                player.height += f.height / 2;
                 player.y -= f.height / 4;
                 f.height -= 2 * f.height;
                 f.x += f.height;

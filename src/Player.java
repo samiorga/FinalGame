@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 /*
  * To change this template, choose Tools | Templates
@@ -12,46 +13,46 @@ import java.awt.Rectangle;
  *
  * @author branc2347
  */
-public class Player extends Rectangle {
+public class Player extends Rectangle2D.Double {
 
-    private double dwidth, dheight;
-    private double speed = 5;
+    private double speed;
     private Color c = Color.GRAY;
 
-    public Player(int x, int y, int width, int height) {
+    public Player(double x, double y, double width, double height) {
         super(x, y, width, height);
-
-        dwidth = width;
-        dheight = height;
+        this.speed = Game.defaultSpeed;
     }
-
+    
     public void move(boolean w, boolean a, boolean s, boolean d) {
         if (w) {
-            y -= speed;
+            y -= this.speed;
         }
         if (s) {
-            y += speed;
+            y += this.speed;
         }
         if (a) {
-            x -= speed;
+            x -= this.speed;
         }
         if (d) {
-            x += speed;
+            x += this.speed;
         }
     }
 
     public void increaseWidth(double increment) {
-        dwidth += increment;
-        width = (int) dwidth;
+        width += increment;
     }
 
     public void increaseHeight(double increment) {
-        dheight += increment;
-        height = (int) dheight;
+        height += increment;
     }
 
     public void draw(Graphics2D g) {
         g.setColor(c);
-        g.fillOval(x, y, width, height);
+        g.fillOval((int)x, (int)y, (int)width, (int)height);
+    }
+    public void playerSpeed(){
+        double speedFactor = Game.playerWidth/this.width;
+        this.speed = Game.defaultSpeed * speedFactor;
+        System.out.println(this.speed);
     }
 }

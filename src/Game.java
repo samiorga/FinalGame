@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
 /**
@@ -26,38 +27,42 @@ public class Game extends JComponent implements KeyListener {
     public static final int HEIGHT = 600;
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
+    
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
+    
     //movement variables
     boolean p1Up = false;
     boolean p1Down = false;
     boolean p1Right = false;
     boolean p1Left = false;
+    
     //size boost variables
     boolean p1Add = false;
     boolean p1Minus = false;
     boolean p2Add = false;
     boolean p2Minus = false;
+    
     //player speed 
-    int speed = 5;
+    static final int defaultSpeed = 3;
+    
     // character variables
-    Player player1 = new Player(500, 300, 60, 60);
-    Player player2 = new Player(300, 300, 50, 50);
-    int width = player1.width;
-    int height = player1.height;
+    static final double playerWidth = 20;
+    Player player1 = new Player(500, 300, playerWidth, playerWidth);
+    Player player2 = new Player(300, 300, playerWidth,playerWidth);
     // Random for objects
-    Random random = new Random();
-    boolean drawn = false;
-    //food gen
-    int entireWidth = 5000;
-    int entireHeight = 3750;
-    int amountFood = 10000;
-    Rectangle[] food = new Rectangle[amountFood];
+    Random random = new Random(); // used for generating food, player position
+    
+    //food gen variables
+    int entireWidth = 5000; // actual width of the game (not the window)
+    int entireHeight = 3750;// actual heigh of the game (not the window)
+    int amountFood = 10000; // amount of food to be generated
+    Rectangle[] food = new Rectangle[amountFood]; //array storing all food created
     int foodWidth = 2; //used for both width and height because it's a circle
-    int timer = 5 * 60; // 5 second delay
+    int timer = 15 * 60; // delay before respawn
+    
     //camera correction + zoom
-    double zoomFactor = 1.5;
-    CameraCorrection camera = new CameraCorrection();
+    double zoomFactor = 3; // factor to
     double camWidth = WIDTH / zoomFactor;
     double camHeight = HEIGHT / zoomFactor;
     double camx = (player1.getCenterX() - camWidth / 2);
@@ -71,12 +76,9 @@ public class Game extends JComponent implements KeyListener {
         Graphics2D g2 = (Graphics2D) g;
         // always clear the screen first!
         g2.clearRect(0, 0, entireWidth, entireHeight);
-        camera.playerCameraCorrection(player1, 0);
         //scale or zoom in
-        
         g2.scale(zoomFactor, zoomFactor);
         g2.translate(-camx, -camy);
-
 
         // GAME DRAWING GOES HERE
         for (int i = 0; i < amountFood; i++) {
@@ -109,6 +111,7 @@ public class Game extends JComponent implements KeyListener {
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
+            player1.playerSpeed();
             player1.move(p1Up, p1Left, p1Down, p1Right);
             if (p1Add) {
                 player1.width += 2;
@@ -184,15 +187,15 @@ public class Game extends JComponent implements KeyListener {
     public void handleCollisionPlayer(Player p1, Player p2) {
         int xDiff = (int) (p1.getCenterX() - p2.getCenterX());
         int yDiff = (int) (p1.getCenterY() - p2.getCenterY());
-        int p1Radius = p1.width / 2;
-        int p2Radius = p2.width / 2;
+        double p1Radius = p1.width / 2;
+        double p2Radius = p2.width / 2;
         double centerDiff = (p1Radius + p2Radius);
 
         if (Math.sqrt(xDiff * xDiff + yDiff * yDiff) <= centerDiff - p2Radius
                 || Math.sqrt(xDiff * xDiff + yDiff * yDiff) <= centerDiff - p1Radius) {
             if (0.9 * p1.width >= p2.width) {
                 if (p2.height > -1 && p2.width > -1) {
-                    System.out.println(p1.width);
+//                    System.out.println(p1.width);
                     p1.width += 2;
                     p1.x -= 1;
                     p1.height += 2;
@@ -222,15 +225,15 @@ public class Game extends JComponent implements KeyListener {
         for (Rectangle f : food) {
             int xDiff = (int) (player.getCenterX() - f.getCenterX());
             int yDiff = (int) (player.getCenterY() - f.getCenterY());
-            int p1Radius = player.width / 2;
+            double p1Radius = player.width / 2;
             int p2Radius = f.width / 2;
             double centerDiff = (p1Radius + p2Radius);
             if (Math.sqrt(xDiff * xDiff + yDiff * yDiff) <= centerDiff - p2Radius && f.width > 0) {
-                System.out.println(player.width);
-                player.width += f.width;
-                player.x -= f.width / 2;
-                player.height += f.height;
-                player.y -= f.height / 2;
+//                System.out.println(player.width);
+                player.width += f.width/2;
+                player.x -= f.width / 4;
+                player.height += f.height/2;
+                player.y -= f.height / 4;
                 f.height -= 2 * f.height;
                 f.x += f.height;
                 f.width -= 2 * f.width;

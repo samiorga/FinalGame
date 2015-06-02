@@ -54,7 +54,7 @@ public class Game extends JComponent implements KeyListener {
     int foodWidth = 2; //used for both width and height because it's a circle
     int timer = 15 * 60; // delay before respawn
     //camera correction + zoom
-    static double zoomFactor = 2; // factor to
+    static double zoomFactor = 3; // factor to
     static double camWidth = WIDTH / zoomFactor;
     static double camHeight = HEIGHT / zoomFactor;
     double camx = (player1.getCenterX() - camWidth / 2);
@@ -78,9 +78,6 @@ public class Game extends JComponent implements KeyListener {
         for (int i = 0; i < amountFood; i++) {
             g2.fillOval(food[i].x-(int)camx, food[i].y-(int)camy, food[i].width, food[i].height);
         }
-        
-
-
         // GAME DRAWING ENDS HERE
     }
 

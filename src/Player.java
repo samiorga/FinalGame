@@ -1,8 +1,6 @@
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 /*
@@ -46,9 +44,11 @@ public class Player extends Rectangle2D.Double {
         height += increment;
     }
 
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, double camx, double camy) {
         g.setColor(c);
-        g.fillOval((int)x, (int)y, (int)width, (int)height);
+        g.fillOval((int)(x-camx), (int)(y-camy), (int)width, (int)height);
+//        g.draw(this);
+        
     }
     public void playerSpeed(){
         double speedFactor = Game.playerWidth/this.width;

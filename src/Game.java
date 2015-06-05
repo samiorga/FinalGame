@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 /**
@@ -49,7 +50,7 @@ public class Game extends JComponent implements KeyListener {
     //food gen variables
     int entireWidth = 10000; // actual width of the game (not the window)
     int entireHeight = 7500;// actual heigh of the game (not the window)
-    int amountFood = 10000; // amount of food to be generated
+    int amountFood = 20000; // amount of food to be generated
     Rectangle[] food = new Rectangle[amountFood]; //array storing all food created
     final int foodWidth = 2; //used for both width and height because it's a circle
     int timer = 15 * 60; // delay before respawn
@@ -133,7 +134,7 @@ public class Game extends JComponent implements KeyListener {
             foodRespawn(player1, food);
             player1.playerSpeed();
             player1.move(p1Up, p1Left, p1Down, p1Right);
-
+//            player1.playerZoom();
             camWidth = WIDTH / zoomFactor;
             camHeight = HEIGHT / zoomFactor;
             camx = (player1.getCenterX() - camWidth / 2.0);
@@ -169,7 +170,6 @@ public class Game extends JComponent implements KeyListener {
             if (food[i].width < 0) {
                 if (foodTimer[i] > 0) {
                     foodTimer[i]--;
-                    System.out.println(foodTimer[i]);
                 }
             }
         }
@@ -186,7 +186,6 @@ public class Game extends JComponent implements KeyListener {
                 || Math.sqrt(xDiff * xDiff + yDiff * yDiff) <= centerDiff - p1Radius) {
             if (0.9 * p1.width >= p2.width) {
                 if (p2.height > -1 && p2.width > -1) {
-//                    System.out.println(p1.width);
                     p1.width += 2;
                     p1.x -= 1;
                     p1.height += 2;

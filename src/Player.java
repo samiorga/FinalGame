@@ -2,6 +2,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 /*
  * To change this template, choose Tools | Templates
@@ -16,6 +17,8 @@ public class Player extends Rectangle2D.Double {
 
     private double speed;
     private Color c = Color.GRAY;
+    //image
+    BufferedImage playerColour = ImageHelper.loadImage("playerColour.png");
 
     public Player(double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -39,7 +42,7 @@ public class Player extends Rectangle2D.Double {
 
     public void draw(Graphics2D g, double camx, double camy) {
         g.setColor(Color.BLACK);
-        g.fillOval((int) (x - camx), (int) (y - camy), (int) width, (int) height);
+        g.drawImage(playerColour, (int) (x - camx), (int) (y - camy), (int) width, (int) height, null);
     }
 
     public void playerSpeed() {
@@ -48,9 +51,11 @@ public class Player extends Rectangle2D.Double {
         if(remainder == 0.1 || remainder == 0.2 || remainder == 0.25 ||remainder == 0.5){
             this.speed = Game.defaultSpeed * speedFactor;
         }
-        //logic for camera zoom out as mass increases
-            Game.zoomFactor = Game.defaultZoom * speedFactor;
-        System.out.println(this.width + "  " + speedFactor + "    "+Game.zoomFactor);
-//        this.speed =1 ;
+        //logic for camera zoom out as mass increases'
+        // called 'easing' or tweaning
+            Game.zoomFactor = (Game.defaultZoom * speedFactor);
+            
+//        System.out.println(this.width + "  " + speedFactor + "    "+Game.zoomFactor);
+////        this.speed =1 ;
     }
 }

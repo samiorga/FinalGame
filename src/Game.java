@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JComponent;
@@ -45,6 +46,7 @@ public class Game extends JComponent implements KeyListener {
     static final double playerWidth = 20;
     Player player1 = new Player(400, 400, playerWidth, playerWidth);
     Player player2 = new Player(300, 300, playerWidth, playerWidth);
+    Color[] colours = {Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.YELLOW, Color.WHITE, Color.RED};
     // Random for objects
     Random random = new Random(); // used for generating food, player position
     //food gen variables
@@ -52,7 +54,7 @@ public class Game extends JComponent implements KeyListener {
     int entireHeight = 7500;// actual heigh of the game (not the window)
     int amountFood = 20000; // amount of food to be generated
     Rectangle[] food = new Rectangle[amountFood]; //array storing all food created
-    final int foodWidth = 2; //used for both width and height because it's a circle
+    final int foodWidth = 4; //used for both width and height because it's a circle
     int timer = 15 * 60; // delay before respawn
     int[] foodTimer = new int[amountFood];
     //camera correction + zoom
@@ -73,12 +75,17 @@ public class Game extends JComponent implements KeyListener {
         g2.clearRect(0, 0, entireWidth, entireHeight);
         //scale or zoom in
         g2.scale(zoomFactor, zoomFactor);
-        player1.draw(g2, camx, camy);
-        player2.draw(g2, camx, camy);
+        
         // GAME DRAWING GOES HERE
+         player2.draw(g2, camx, camy, Player.russianPlayer);
+        player1.draw(g2, camx, camy, Player.obamaPlayer);
         for (int i = 0; i < amountFood; i++) {
+            g.setColor(colours[random.nextInt(colours.length)]);
+            
             g2.fillOval(food[i].x - (int) camx, food[i].y - (int) camy, food[i].width, food[i].height);
         }
+        
+       
         // GAME DRAWING ENDS HERE
     }
 

@@ -19,6 +19,8 @@ public class Player extends Rectangle2D.Double {
     private Color c = Color.GRAY;
     //image
     BufferedImage playerColour = ImageHelper.loadImage("playerColour.png");
+    public static BufferedImage russianPlayer = ImageHelper.loadImage("russianPlayer.png");
+    public static BufferedImage obamaPlayer = ImageHelper.loadImage("obamaPlayer.png");
 
     public Player(double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -40,9 +42,9 @@ public class Player extends Rectangle2D.Double {
         }
     }
 
-    public void draw(Graphics2D g, double camx, double camy) {
+    public void draw(Graphics2D g, double camx, double camy, BufferedImage playerStyle) {
         g.setColor(Color.BLACK);
-        g.drawImage(playerColour, (int) (x - camx), (int) (y - camy), (int) width, (int) height, null);
+        g.drawImage(playerStyle, (int) (x - camx), (int) (y - camy), (int) width, (int) height, null);
     }
 
     public void playerSpeed() {

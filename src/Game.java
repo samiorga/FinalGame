@@ -5,6 +5,7 @@
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -12,7 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Random;
 // make sure you rename this class if you are doing a copy/paste
 public class Game extends JComponent implements KeyListener {
 
-    // Height and Width of our game
+    // Height and Width of game
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     // sets the framerate and delay for our game
@@ -31,32 +32,38 @@ public class Game extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     //movement variables
-    boolean p1Up = false;
-    boolean p1Down = false;
-    boolean p1Right = false;
-    boolean p1Left = false;
-    //size boost variables
+    boolean p1Up = false; // up 
+    boolean p1Down = false; // down
+    boolean p1Right = false; // right
+    boolean p1Left = false; // left
+    //size boost variables.. TESTING PURPOSES ONLY
     boolean p1Add = false;
     boolean p1Minus = false;
     boolean p2Add = false;
     boolean p2Minus = false;
     //player speed 
-    static final int defaultSpeed = 4;
     // character variables
     static final double playerWidth = 20;
+    static final int defaultSpeed = 4; // player speed
     Player player1 = new Player(400, 400, playerWidth, playerWidth);
     Player player2 = new Player(300, 300, playerWidth, playerWidth);
-    Color[] colours = {Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.YELLOW, Color.WHITE, Color.RED};
+    // Menu, Logic, Death - screens
+    int screen = 0;
+    final int startScreen = 0;
+    final int gameScreen = 1;
+    final int endScreen = 2;
+    boolean enterPressed = false;
+    public String playerName = "";
+    Font playerFont = new Font(null, Font.BOLD, 20);
     // Random for objects
     Random random = new Random(); // used for generating food, player position
     //food gen variables
-    int entireWidth = 10000; // actual width of the game (not the window)
-    int entireHeight = 7500;// actual heigh of the game (not the window)
+    public static int entireWidth = 10000; // actual width of the game (not the window)
+    public static int entireHeight = 7500;// actual heigh of the game (not the window)
     int amountFood = 20000; // amount of food to be generated
-    Rectangle[] food = new Rectangle[amountFood]; //array storing all food created
+    Food[] food = new Food[amountFood]; //array storing all food created
     final int foodWidth = 4; //used for both width and height because it's a circle
-    int timer = 15 * 60; // delay before respawn
-    int[] foodTimer = new int[amountFood];
+    private int[] foodTimer = new int[amountFood];
     //camera correction + zoom
     static final double defaultZoom = 4;
     static double zoomFactor = defaultZoom; // factor to
@@ -73,22 +80,36 @@ public class Game extends JComponent implements KeyListener {
         Graphics2D g2 = (Graphics2D) g;
         // always clear the screen first!
         g2.clearRect(0, 0, entireWidth, entireHeight);
-        //scale or zoom in
-        g2.scale(zoomFactor, zoomFactor);
-        
-        // GAME DRAWING GOES HERE
-         player2.draw(g2, camx, camy, Player.russianPlayer);
-        player1.draw(g2, camx, camy, Player.obamaPlayer);
-        for (int i = 0; i < amountFood; i++) {
-            g.setColor(colours[random.nextInt(colours.length)]);
+        if (screen == startScreen) {
+            g2.setColor(Color.BLACK);
+            g2.fillRect(0, 0, WIDTH, HEIGHT);
+            g2.setColor(Color.WHITE);
+            g2.setFont(playerFont);
+            drawCenteredString(g2, "Please enter your player name:", WIDTH/2,WIDTH/4, HEIGHT/2);
+            drawCenteredString(g2, playerName, WIDTH/2, WIDTH/4, HEIGHT/2+30);
             
-            g2.fillOval(food[i].x - (int) camx, food[i].y - (int) camy, food[i].width, food[i].height);
+        } else if (screen == gameScreen) {
+            //scale or zoom in
+            g2.scale(zoomFactor, zoomFactor);
+
+            // GAME DRAWING GOES HERE
+            player2.draw(g2, camx, camy, Player.russianPlayer, playerName);
+            player1.draw(g2, camx, camy, Player.obamaPlayer, playerName);
+            for (Food f : food) {
+                f.draw(g2, camx, camy);
+            }
+        } else if (screen == endScreen) {
         }
-        
-       
+
+
         // GAME DRAWING ENDS HERE
     }
-
+private void drawCenteredString(Graphics2D g2, String string, int width, int XPos, int YPos){
+        int stringLen = (int)
+            g2.getFontMetrics().getStringBounds(string, g2).getWidth();
+        int start = width/2 - stringLen/2;
+        g2.drawString(string, start + XPos, YPos);
+ }
     // The main game loop
     // In here is where all the logic for my game will go
     public void run() {
@@ -108,49 +129,14 @@ public class Game extends JComponent implements KeyListener {
 
 
             // all your game rules and move is done in here
-            // GAME LOGIC STARTS HERE 
 
-            if (p1Add) {
-                player1.width += 2;
-                player1.height += 2;
-                player1.x -= 1;
-                player1.y -= 1;
+            if (screen == startScreen) {
+            } else if (screen == gameScreen) {
+                gameLogic();
+            } else if (screen == endScreen) {
             }
-            if (p1Minus) {
-                player1.width -= 2;
-                player1.height -= 2;
-                player1.x += 1;
-                player1.y += 1;
-            }
-            if (p2Add) {
-                player2.width += 2;
-                player2.height += 2;
-                player2.x -= 1;
-                player2.y -= 1;
-            }
-            if (p2Minus) {
-                player2.width -= 2;
-                player2.height -= 2;
-                player2.x += 1;
-                player2.y += 1;
-            }
-
-            handleCollisionPlayer(player1, player2);
-            handleCollisionFood(player1, food);
-            handleCollisionFood(player2, food);
-            foodRespawn(player1, food);
-            player1.playerSpeed();
-            player1.move(p1Up, p1Left, p1Down, p1Right);
-//            player1.playerZoom();
-            camWidth = WIDTH / zoomFactor;
-            camHeight = HEIGHT / zoomFactor;
-            camx = (player1.getCenterX() - camWidth / 2.0);
-            camy = (player1.getCenterY() - camHeight / 2.0);
-
-            // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
             repaint();
-
             // SLOWS DOWN THE GAME BASED ON THE FRAMERATE ABOVE
             // USING SOME SIMPLE MATH
             deltaTime = System.currentTimeMillis() - startTime;
@@ -163,6 +149,54 @@ public class Game extends JComponent implements KeyListener {
                 };
             }
         }
+    }
+
+    void gameLogic() {
+        // GAME LOGIC STARTS HERE 
+        if (p1Add) {
+            player1.width += 2;
+            player1.height += 2;
+            player1.x -= 1;
+            player1.y -= 1;
+        }
+        if (p1Minus) {
+            player1.width -= 2;
+            player1.height -= 2;
+            player1.x += 1;
+            player1.y += 1;
+        }
+        if (p2Add) {
+            player2.width += 2;
+            player2.height += 2;
+            player2.x -= 1;
+            player2.y -= 1;
+        }
+        if (p2Minus) {
+            player2.width -= 2;
+            player2.height -= 2;
+            player2.x += 1;
+            player2.y += 1;
+        }
+        if (player2.width < 0 || player2.height < 0) {
+            player2.width = 0;
+            player2.height = 0;
+        }
+        if (player1.width < 1 || player1.height < 1) {
+            player1.width = 0;
+            player1.height = 0;
+        }
+        handleCollisionPlayer(player1, player2);
+        handleCollisionFood(player1, food);
+        handleCollisionFood(player2, food);
+        foodRespawn(player1, food);
+        player1.playerSpeed();
+        player1.move(p1Up, p1Left, p1Down, p1Right);
+        camWidth = WIDTH / zoomFactor;
+        camHeight = HEIGHT / zoomFactor;
+        camx = (player1.getCenterX() - camWidth / 2.0);
+        camy = (player1.getCenterY() - camHeight / 2.0);
+
+        // GAME LOGIC ENDS HERE 
     }
 
     public void foodRespawn(Player player, Rectangle[] food) {
@@ -298,6 +332,12 @@ public class Game extends JComponent implements KeyListener {
         }
         if (key == KeyEvent.VK_K) {
             p2Minus = true;
+            // Typing player name
+        }
+        if (screen == startScreen) {
+            if (e.getKeyChar() >= 'A' && e.getKeyChar() <= 'z') {
+                playerName += e.getKeyChar();
+            }
         }
     }
 
@@ -333,9 +373,9 @@ public class Game extends JComponent implements KeyListener {
 
     public void genFood(int amountFood) {
         for (int i = 0; i < amountFood; i++) {
-            food[i] = new Rectangle(1, 1, foodWidth, foodWidth);
-            food[i].x = random.nextInt(entireWidth - foodWidth) + 1;
-            food[i].y = random.nextInt(entireHeight - foodWidth) + 1;
+            food[i] = new Food(1, 1, foodWidth, foodWidth);
+            food[i].x = random.nextInt(Game.entireWidth - foodWidth) + 1;
+            food[i].y = random.nextInt(Game.entireHeight - foodWidth) + 1;
             foodTimer[i] = 15 * 60;
         }
     }

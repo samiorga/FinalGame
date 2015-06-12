@@ -42,9 +42,9 @@ public class Player extends Rectangle2D.Double {
         }
     }
 
-    public void draw(Graphics2D g, double camx, double camy, BufferedImage playerStyle) {
-        g.setColor(Color.BLACK);
+    public void draw(Graphics2D g, double camx, double camy, BufferedImage playerStyle, String playerName) {
         g.drawImage(playerStyle, (int) (x - camx), (int) (y - camy), (int) width, (int) height, null);
+        g.drawString(playerName, (int) (x - camx), (int) (y - camy));
     }
 
     public void playerSpeed() {
@@ -53,7 +53,7 @@ public class Player extends Rectangle2D.Double {
         if(remainder == 0.1 || remainder == 0.2 || remainder == 0.25 ||remainder == 0.5){
             this.speed = Game.defaultSpeed * speedFactor;
         }
-        //logic for camera zoom out as mass increases'
+        //logic for camera zoom out as mass increases.. it uses the same variable as spee
         // called 'easing' or tweaning
             Game.zoomFactor = (Game.defaultZoom * speedFactor);
             

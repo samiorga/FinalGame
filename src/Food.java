@@ -1,39 +1,34 @@
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.Random;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
- * @author Caius
+ * @author
+ * Caius
  */
-public class Food extends Rectangle{
-    
-    public Food(int x, int y, int width, int height){
-        super(x,y,width,height);
+public class Food extends Rectangle {
+
+    private Color foodColour;
+    Random random = new Random();
+
+    public Food(int x, int y, int width, int height) {
+        super(x, y, width, height);
+        Color[] colours = {Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.YELLOW, Color.WHITE, Color.RED};
+        foodColour = colours[random.nextInt(colours.length)];
     }
-//    public void handleCollision2(Player player, Rectangle[] food)
-//    {
-//        for(int i =0; i < food.length; i++){
-//        int xDiff = (int) (player.getCenterX() - food[i].getCenterX());
-//        int yDiff = (int) (player.getCenterY() - food[i].getCenterY());
-//        int p1Radius = player.width / 2;
-//        int p2Radius = food[i].width / 2;
-//        double centerDiff = (p1Radius + p2Radius);
-//        if (Math.sqrt(xDiff * xDiff + yDiff * yDiff) <= centerDiff - p2Radius)
-//        {
-//            if (food[i].height > -1 && food[i].width > -1) {
-//                    System.out.println(player.width);
-//                    player.width ++;
-//                    player.height ++;
-//                    food[i].height -= 2;
-//                    food[i].width -= 2;
-//                }
-//        }
-//        }
-//    }
+
+    public void draw(Graphics2D g2, double camx, double camy) {
+        g2.setColor(foodColour);
+        g2.fillOval(x - (int) camx, y - (int) camy, width, height);
+
+    }
+    
 }

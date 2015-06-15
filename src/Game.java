@@ -13,7 +13,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -36,7 +35,7 @@ public class Game extends JComponent implements KeyListener {
     boolean p1Down = false; // down
     boolean p1Right = false; // right
     boolean p1Left = false; // left
-    //size boost variables.. TESTING PURPOSES ONLY
+    //size boost variables.. debug mode
     boolean p1Add = false;
     boolean p1Minus = false;
     boolean p2Add = false;
@@ -55,6 +54,7 @@ public class Game extends JComponent implements KeyListener {
     boolean enterPressed = false;
     public String playerName = "";
     Font playerFont = new Font(null, Font.BOLD, 20);
+    int textScroll= 0;
     // Random for objects
     Random random = new Random(); // used for generating food, player position
     //food gen variables
@@ -93,12 +93,15 @@ public class Game extends JComponent implements KeyListener {
             g2.scale(zoomFactor, zoomFactor);
 
             // GAME DRAWING GOES HERE
-            player2.draw(g2, camx, camy, Player.russianPlayer, playerName);
+            player2.draw(g2, camx, camy, Player.russianPlayer, "");
             player1.draw(g2, camx, camy, Player.obamaPlayer, playerName);
             for (Food f : food) {
                 f.draw(g2, camx, camy);
             }
         } else if (screen == endScreen) {
+            g2.clearRect(0, 0, entireWidth, entireHeight);
+            g2.setFont(playerFont);
+            g2.drawString("THANKS OBAMA ...", (int)camWidth + textScroll, (int)camHeight/2);
         }
 
 
@@ -134,6 +137,7 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
             } else if (screen == gameScreen) {
                 gameLogic();
             } else if (screen == endScreen) {
+                textScroll += 1;
             }
             // update the drawing (calls paintComponent)
             repaint();
@@ -153,6 +157,7 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
 
     void gameLogic() {
         // GAME LOGIC STARTS HERE 
+        
         if (p1Add) {
             player1.width += 2;
             player1.height += 2;
@@ -195,7 +200,9 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
         camHeight = HEIGHT / zoomFactor;
         camx = (player1.getCenterX() - camWidth / 2.0);
         camy = (player1.getCenterY() - camHeight / 2.0);
-
+        if(player1.width < playerWidth){
+            screen = 2;
+        }
         // GAME LOGIC ENDS HERE 
     }
 
@@ -309,7 +316,21 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_W) {
+        
+        if (screen == startScreen) { 
+            if (e.getKeyChar() >= 'A' && e.getKeyChar() <= 'z' || e.getKeyChar() == ' ') {
+                playerName += e.getKeyChar(); // Typing player name
+            }
+            else if(key == KeyEvent.VK_BACK_SPACE){
+                playerName = playerName.substring(0, playerName.length()-1);
+                System.out.println(playerName);
+            }
+            else if(key == KeyEvent.VK_ENTER){
+                screen = 1;
+            }
+        }
+        else if(screen == gameScreen){
+            if (key == KeyEvent.VK_W) {
             p1Up = true;
         }
         if (key == KeyEvent.VK_S) {
@@ -332,11 +353,11 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
         }
         if (key == KeyEvent.VK_K) {
             p2Minus = true;
-            // Typing player name
         }
-        if (screen == startScreen) {
-            if (e.getKeyChar() >= 'A' && e.getKeyChar() <= 'z') {
-                playerName += e.getKeyChar();
+        }
+        else if( screen == endScreen){
+            if(key == KeyEvent.VK_SPACE){
+                screen = 0;
             }
         }
     }

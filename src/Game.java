@@ -54,7 +54,7 @@ public class Game extends JComponent implements KeyListener {
     boolean enterPressed = false;
     public String playerName = "";
     Font playerFont = new Font(null, Font.BOLD, 20);
-    int textScroll= 0;
+    int textScroll = 0;
     // Random for objects
     Random random = new Random(); // used for generating food, player position
     //food gen variables
@@ -85,9 +85,9 @@ public class Game extends JComponent implements KeyListener {
             g2.fillRect(0, 0, WIDTH, HEIGHT);
             g2.setColor(Color.WHITE);
             g2.setFont(playerFont);
-            drawCenteredString(g2, "Please enter your player name:", WIDTH/2,WIDTH/4, HEIGHT/2);
-            drawCenteredString(g2, playerName, WIDTH/2, WIDTH/4, HEIGHT/2+30);
-            
+            drawCenteredString(g2, "Please enter your player name:", WIDTH / 2, WIDTH / 4, HEIGHT / 2);
+            drawCenteredString(g2, playerName, WIDTH / 2, WIDTH / 4, HEIGHT / 2 + 30);
+
         } else if (screen == gameScreen) {
             //scale or zoom in
             g2.scale(zoomFactor, zoomFactor);
@@ -101,20 +101,22 @@ public class Game extends JComponent implements KeyListener {
         } else if (screen == endScreen) {
             g2.clearRect(0, 0, entireWidth, entireHeight);
             g2.setFont(playerFont);
-            g2.drawString("THANKS OBAMA ...", (int)camWidth + textScroll, (int)camHeight/2);
+            g2.drawString("THANKS OBAMA ...", (int) camWidth + textScroll, (int) camHeight / 2);
+            g2.drawString(" my name is Reek ", (int) camWidth - (int) camWidth * 4 + textScroll, (int) camHeight);
         }
 
 
         // GAME DRAWING ENDS HERE
     }
-private void drawCenteredString(Graphics2D g2, String string, int width, int XPos, int YPos){
-        int stringLen = (int)
-            g2.getFontMetrics().getStringBounds(string, g2).getWidth();
-        int start = width/2 - stringLen/2;
+
+    private void drawCenteredString(Graphics2D g2, String string, int width, int XPos, int YPos) {
+        int stringLen = (int) g2.getFontMetrics().getStringBounds(string, g2).getWidth();
+        int start = width / 2 - stringLen / 2;
         g2.drawString(string, start + XPos, YPos);
- }
+    }
     // The main game loop
     // In here is where all the logic for my game will go
+
     public void run() {
         // Used to keep track of time used to draw and update the game
         // This is used to limit the framerate later on
@@ -137,6 +139,12 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
             } else if (screen == gameScreen) {
                 gameLogic();
             } else if (screen == endScreen) {
+                player1.width = playerWidth;
+                player1.height = playerWidth;
+                player1.x = 400;
+                player2.x = 300;
+                player2.width = playerWidth;
+                player2.height = playerWidth;
                 textScroll += 1;
             }
             // update the drawing (calls paintComponent)
@@ -157,7 +165,7 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
 
     void gameLogic() {
         // GAME LOGIC STARTS HERE 
-        
+
         if (p1Add) {
             player1.width += 2;
             player1.height += 2;
@@ -200,7 +208,7 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
         camHeight = HEIGHT / zoomFactor;
         camx = (player1.getCenterX() - camWidth / 2.0);
         camy = (player1.getCenterY() - camHeight / 2.0);
-        if(player1.width < playerWidth){
+        if (player1.width < playerWidth && player1.height < playerWidth) {
             screen = 2;
         }
         // GAME LOGIC ENDS HERE 
@@ -316,47 +324,42 @@ private void drawCenteredString(Graphics2D g2, String string, int width, int XPo
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        
-        if (screen == startScreen) { 
+
+        if (screen == startScreen) {
             if (e.getKeyChar() >= 'A' && e.getKeyChar() <= 'z' || e.getKeyChar() == ' ') {
                 playerName += e.getKeyChar(); // Typing player name
-            }
-            else if(key == KeyEvent.VK_BACK_SPACE){
-                playerName = playerName.substring(0, playerName.length()-1);
-                System.out.println(playerName);
-            }
-            else if(key == KeyEvent.VK_ENTER){
+            } else if (key == KeyEvent.VK_BACK_SPACE && playerName.length() != 0) {
+                playerName = playerName.substring(0, playerName.length() - 1);
+            } else if (key == KeyEvent.VK_ENTER) {
                 screen = 1;
             }
-        }
-        else if(screen == gameScreen){
+        } else if (screen == gameScreen) {
             if (key == KeyEvent.VK_W) {
-            p1Up = true;
-        }
-        if (key == KeyEvent.VK_S) {
-            p1Down = true;
-        }
-        if (key == KeyEvent.VK_A) {
-            p1Left = true;
-        }
-        if (key == KeyEvent.VK_D) {
-            p1Right = true;
-        }
-        if (key == KeyEvent.VK_P) {
-            p1Add = true;
-        }
-        if (key == KeyEvent.VK_O) {
-            p1Minus = true;
-        }
-        if (key == KeyEvent.VK_L) {
-            p2Add = true;
-        }
-        if (key == KeyEvent.VK_K) {
-            p2Minus = true;
-        }
-        }
-        else if( screen == endScreen){
-            if(key == KeyEvent.VK_SPACE){
+                p1Up = true;
+            }
+            if (key == KeyEvent.VK_S) {
+                p1Down = true;
+            }
+            if (key == KeyEvent.VK_A) {
+                p1Left = true;
+            }
+            if (key == KeyEvent.VK_D) {
+                p1Right = true;
+            }
+            if (key == KeyEvent.VK_P) {
+                p1Add = true;
+            }
+            if (key == KeyEvent.VK_O) {
+                p1Minus = true;
+            }
+            if (key == KeyEvent.VK_L) {
+                p2Add = true;
+            }
+            if (key == KeyEvent.VK_K) {
+                p2Minus = true;
+            }
+        } else if (screen == endScreen) {
+            if (key == KeyEvent.VK_SPACE) {
                 screen = 0;
             }
         }

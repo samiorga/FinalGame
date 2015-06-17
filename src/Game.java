@@ -132,7 +132,7 @@ public class Game extends JComponent implements KeyListener {
             if (screen == startScreen) { // if start screen, beginning of game
             } else if (screen == gameScreen) { //if game screen do gameLogic
                 gameLogic(); // gameLogic method 
-            } else if (screen == endScreen) { 
+            } else if (screen == endScreen) {
                 // if it's the end screen, reset player variables and scroll text
                 player1.width = playerWidth;
                 player1.height = playerWidth;
@@ -399,7 +399,7 @@ public class Game extends JComponent implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        //same as above, but release the movement and size adding/subtracting
+        //same as above, but release the movement and size adding/subtracting keys
         if (key == KeyEvent.VK_W) {
             p1Up = false;
         }

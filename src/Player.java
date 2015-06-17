@@ -60,7 +60,7 @@ public class Player extends Rectangle2D.Double {
         }
         //logic for camera zoom out as mass increases.. it uses the same variable as speed
         // called 'easing' or tweaning
-        Game.zoomFactor = (Game.defaultZoom * speedFactor); // zoom factor according to size 
+        Game.zoomFactor = Game.defaultZoom * speedFactor; // zoom factor according to size 
         //zoomFactor for player name, to make it constant in comparison to player size. does not work well 
         double zoomFactor = 10 / speedFactor;
         nameFont = nameFont.deriveFont((float) zoomFactor + 10);
